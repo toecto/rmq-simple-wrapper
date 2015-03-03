@@ -1,0 +1,17 @@
+{
+    "name": "toecto/AMQPSimpleWrapper",
+    "description": "AMQP simplified client",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maxim Popov",
+            "email": "maxim@zalil.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"toecto\\AMQPSimpleWrapper\\": "src/"}
+    },
+    "require": {
+        "videlalvaro/php-amqplib": "~2.5"
+    }
+}
