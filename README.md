@@ -1,10 +1,6 @@
 # rmq-simple-wrapper
 AMQP, RabbitMQ simplified client
 
-# rmq-simple-wrapper
-AMQP, RabbitMQ simplified client
-
-
 ## Instalation
 
 ```javascript
@@ -19,4 +15,3 @@ AMQP, RabbitMQ simplified client
         "toecto/rmq-simple-wrapper": "dev-master",
     },
   ```
-  
