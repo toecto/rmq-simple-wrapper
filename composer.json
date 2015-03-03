@@ -1,5 +1,5 @@
 {
-    "name": "toecto/AMQPSimpleWrapper",
+    "name": "toecto/rmq-simple-wrapper",
     "description": "AMQP simplified client",
     "license": "MIT",
     "authors": [
