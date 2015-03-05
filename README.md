@@ -1,7 +1,7 @@
 # rmq-simple-wrapper
 AMQP, RabbitMQ simplified client
 
-## Instalation
+## Installation with composer:
 
 ```javascript
     "repositories": [
@@ -10,8 +10,7 @@ AMQP, RabbitMQ simplified client
             "url": "git@github.com:toecto/rmq-simple-wrapper.git"
         }
     ],
-
     "require": {
-        "toecto/rmq-simple-wrapper": "dev-master",
-    },
+        "toecto/rmq-simple-wrapper": "dev-master"
+    }
   ```
