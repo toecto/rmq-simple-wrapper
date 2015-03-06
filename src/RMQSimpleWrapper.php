@@ -43,7 +43,7 @@ class AMQPSimpleWrapper {
         return $this->connection;
     }
 
-    private function getChannel() {
+    public function getChannel() {
         if (!$this->channel) {
             $connection = $this->getConnection();
             $this->channel = $connection->channel();    
@@ -62,7 +62,13 @@ class AMQPSimpleWrapper {
     }
 
     public function declareExchange($name, $durable = true, $auto_delete = false) {
-        $this->getChannel()->exchange_declare($name, 'topic', false, $durable, $auto_delete);
+        $this->getChannel()->exchange_declare(
+            $name,
+            'topic',
+            false, // passive
+            $durable,
+            $auto_delete
+        );
     }
 
     public function bindExchange($destination, $source, $routing_key = '') {
@@ -78,7 +84,13 @@ class AMQPSimpleWrapper {
     }
 
     public function declareQueue($name, $durable = true, $auto_delete = false) {
-        $this->getChannel()->queue_declare($name, false, $durable, false, $auto_delete);
+        $this->getChannel()->queue_declare(
+            $name,
+            false, //passive
+            $durable,
+            false, //exclusive
+            $auto_delete
+        );
     }
 
     public function bindQueue($name, $exchange, $routing_key = '') {
@@ -94,8 +106,36 @@ class AMQPSimpleWrapper {
         $this->getChannel()->queue_delete($name);
     }
 
-    public function consume($queue, $callback) {
-        $channel = $this->getChannel();
+    public function QOS($prefetch_count, $prefetch_size = 0) {
+        $this->getChannel()->basic_qos(
+            intval($prefetch_size * $prefetch_count * 1.2),
+            $prefetch_count,
+            false //global
+        );
     }
+
+    public function consume($queue, $callback, $limit = 1, $prefetch = 10, $consumer_tag = null) {
+        $this->QOS($prefetch);
+        $channel = $this->getChannel();
+        $consumer_tag = $this->getChannel()->basic_consume(
+            $queue,
+            $consumer_tag,
+            false, //no_local
+            false, //no_ack
+            false, //exclusive
+            false, //nowait
+            function ($msg) use ($callback) {
+                $ask = call_user_func($callback, $msg->body, $msg->delivery_info['routing_key'], $msg);
+                $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            }
+        );
+
+        while ($limit > 0) {
+            $channel->wait();
+            $limit--;
+        }
+        $channel->basic_cancel($consumer_tag);
+    }
+
 }
 
