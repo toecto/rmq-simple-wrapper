@@ -125,7 +125,7 @@ class AMQPSimpleWrapper {
             false, //exclusive
             false, //nowait
             function ($msg) use ($callback) {
-                $ask = call_user_func($callback, $msg->body, $msg->delivery_info['routing_key'], $msg);
+                $ask = call_user_func($callback, json_decode($msg->body, true), $msg->delivery_info['routing_key'], $msg);
                 $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
             }
         );
