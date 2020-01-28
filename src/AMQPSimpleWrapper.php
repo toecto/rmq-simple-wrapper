@@ -115,6 +115,7 @@ class AMQPSimpleWrapper {
     }
 
     public function consume($queue, $callback, $limit = 1, $prefetch = 10, $consumer_tag = null) {
+        $limit = intval($limit);
         $this->QOS($prefetch);
         $channel = $this->getChannel();
         $consumer_tag = $this->getChannel()->basic_consume(
@@ -125,15 +126,19 @@ class AMQPSimpleWrapper {
             false, //exclusive
             false, //nowait
             function ($msg) use ($callback) {
-                $ask = call_user_func($callback, json_decode($msg->body, true), $msg->delivery_info['routing_key'], $msg);
-                $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+                $ack = call_user_func($callback, json_decode($msg->body, true), $msg->delivery_info['routing_key'], $msg);
+                if ($ack === false) {
+                    $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
+                } else {
+                    $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+                }
             }
         );
 
-        while ($limit > 0) {
+        do {
             $channel->wait();
             $limit--;
-        }
+        } while ($limit != 0);
         $channel->basic_cancel($consumer_tag);
     }
 
