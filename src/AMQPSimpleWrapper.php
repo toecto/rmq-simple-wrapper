@@ -52,7 +52,7 @@ class AMQPSimpleWrapper {
     }
 
     public function publish($exchange, $key, $message, $args = null) {
-        $msg_body = json_encode($message);
+        $msg_body = json_encode($message, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
         $msg_args = array('delivery_mode' => 2);
         if ($args) {
             $msg_args = array_merge($msg_args, $args);
