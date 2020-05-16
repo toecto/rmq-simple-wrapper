@@ -12,6 +12,6 @@
         "psr-4": {"toecto\\AMQPSimpleWrapper\\": "src/"}
     },
     "require": {
-        "videlalvaro/php-amqplib": "~2.5"
+        "php-amqplib/php-amqplib": "^2.9"
     }
 }
