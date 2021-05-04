@@ -114,7 +114,7 @@ class AMQPSimpleWrapper {
         );
     }
 
-    public function consume($queue, $callback, $limit = 1, $prefetch = 10, $consumer_tag = null) {
+    public function consume($queue, $callback, $limit = 1, $prefetch = 10, $consumer_tag = null, $timeout = 0) {
         $limit = intval($limit);
         $this->QOS($prefetch);
         $channel = $this->getChannel();
@@ -136,7 +136,7 @@ class AMQPSimpleWrapper {
         );
 
         do {
-            $channel->wait();
+            $channel->wait(null, false, $timeout);
             $limit--;
         } while ($limit != 0);
         $channel->basic_cancel($consumer_tag);
