@@ -136,7 +136,11 @@ class AMQPSimpleWrapper {
         );
 
         do {
-            $channel->wait(null, false, $timeout);
+            $channel->wait(
+                null, //allowed_methods
+                false, //non_blocking
+                $timeout
+            );
             $limit--;
         } while ($limit != 0);
         $channel->basic_cancel($consumer_tag);
